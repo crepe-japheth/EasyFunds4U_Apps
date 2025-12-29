@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+  {% block main-content %}
+		<!-- Content Header (Page header) -->
+		<div class="content-header">
+			<div class="d-flex align-items-center">
+				<div class="me-auto">
+					<h4 class="page-title">Loans Disbursement</h4>
+					<div class="d-inline-block align-items-center">
+						<nav>
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
+								<li class="breadcrumb-item" aria-current="page">List</li>
+								<li class="breadcrumb-item active" aria-current="page">Disbursement</li>
+							</ol>
+						</nav>
+						
+					</div>
+				</div>
+				
+			</div>
+		</div>
+
+		<!-- Main content -->
+		<section class="content">
+
+		  <div class="row">
+
+
+			<div class="col-12">
+			  <div class="box">
+				<div class="box-header with-border">
+				  <h4 class="box-title">Loans Disbursement</h4>
+				  <div class="box-controls pull-right">
+					<div class="lookup lookup-circle lookup-right">
+					  <input type="text" name="s">
+					</div>
+				  </div>
+				</div>
+				<!-- /.box-header -->
+				<div class="box-body no-padding">
+					<div class="table-responsive">
+					  <table class="table table-hover">
+						<tr>
+						  <th>NO</th>
+						  <th>Loan Application</th>
+						  <th>Disbursed Amount</th>
+						  <th>Disbursement Date</th>
+						  <th>Due Date</th>
+						  <th>Status</th>
+						  <th>Action</th>
+						</tr>
+                        {% for loan in loans %}
+                        <tr>
+						  <td><a href="javascript:void(0)">{{forloop.counter}}</a></td>
+						  <td>{{loan.loan_application}}</td>
+						  <td> {{loan.disbursed_amount}} </td>
+						  <td> {{loan.disbursement_date}} </td>
+						  <td><span class="text-muted">{{loan.due_date}}</span> </td>
+						  <td><span class="badge badge-pill badge-success">{{loan.status}}</span></td>
+						  <td>
+							<a href="#">
+								<i class="glyphicon glyphicon-eye-open text-info me-4" data-bs-toggle="tooltip" title="View"></i>
+							</a>
+							<a href="#">
+								<i class="glyphicon glyphicon-edit text-warning me-4" data-bs-toggle="tooltip" title="Edit"></i>
+							</a>
+							<a href="#">
+								<i class="glyphicon glyphicon-trash text-danger me-4" data-bs-toggle="tooltip" title="Delete"></i>
+							</a>
+						  </td>
+						</tr>
+                        {% empty %}
+                        <tr>
+                          <td colspan="7">No Loans Product found.</td>
+                        </tr>
+                        {% endfor %}
+					  </table>
+					</div>
+				</div>
+				<!-- /.box-body -->
+			  </div>
+			  <!-- /.box -->
+			</div>
+
+			
+		  </div>
+		  <!-- /.row -->
+
+		</section>
+		<!-- /.content -->
+  {% endblock main-content %}  

@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% block main-content %}
+		<!-- Content Header (Page header) -->
+		<div class="content-header">
+			<div class="d-flex align-items-center">
+				<div class="me-auto">
+					<h4 class="page-title">Form</h4>
+					<div class="d-inline-block align-items-center">
+						<nav>
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
+								<li class="breadcrumb-item" aria-current="page">Create</li>
+								<li class="breadcrumb-item active" aria-current="page">User</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+				
+			</div>
+		</div>	  
+
+		<!-- Main content -->
+		<div class="container h-p100">
+		<div class="row align-items-center justify-content-md-center h-p100">
+			
+			<div class="col-12">
+				<div class="row justify-content-center g-0">
+					<div class="col-lg-5 col-md-5 col-12">
+						<div class="bg-white rounded10 shadow-lg">
+							<div class="content-top-agile p-20 pb-0">
+								<h2 class="text-primary">Get started</h2>
+								<p class="mb-0">Register a new User</p>							
+							</div>
+							<div class="p-40">
+								<form action="#" method="post">
+                                    {% csrf_token %}
+                                    {% if form.non_field_errors %}
+                                        <div class="alert alert-danger">
+                                            {{ form.non_field_errors }}
+                                        </div>
+                                    {% endif %}
+									<div class="form-group">
+										<div class="input-group mb-3">
+											<span class="input-group-text bg-transparent"><i class="glyphicon glyphicon-user"></i></span>
+                                            {{ form.username }}
+                                            {% if form.username.errors %}
+                                                <div class="text-danger">
+                                                    {{ form.username.errors }}
+                                                </div>
+                                            {% endif %}
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="input-group mb-3">
+											<span class="input-group-text bg-transparent"><i class="glyphicon glyphicon-envelope"></i></span>
+                                            {{ form.email }}
+                                            {% if form.email.errors %}
+                                                <div class="text-danger">
+                                                    {{ form.email.errors }}
+                                                </div>
+                                            {% endif %}
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="input-group mb-3">
+											<span class="input-group-text bg-transparent"><i class="glyphicon glyphicon-link"></i></span>
+                                            {{ form.role }}
+                                            {% if form.role.errors %}
+                                                <div class="text-danger">
+                                                    {{ form.role.errors }}
+                                                </div>
+                                            {% endif %}
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="input-group mb-3">
+											<span class="input-group-text bg-transparent"><i class="glyphicon glyphicon-object-align-bottom"></i></span>
+                                            {{ form.branch }}
+                                            {% if form.branch.errors %}
+                                                <div class="text-danger">
+                                                    {{ form.branch.errors }}
+                                                </div>
+                                            {% endif %}
+										</div>
+									</div>
+									<div class="form-group">
+										<div class="input-group mb-3">
+											<span class="input-group-text bg-transparent"><i class="glyphicon glyphicon-lock"></i></span>
+                                            {{ form.password1 }}
+                                            {% if form.password1.errors %}
+                                                <div class="text-danger">
+                                                    {{ form.password1.errors }}
+                                                </div>
+                                            {% endif %}
+										</div>
+									</div>
+									
+									<div class="form-group">
+										<div class="input-group mb-3">
+											<span class="input-group-text bg-transparent"><i class="glyphicon glyphicon-lock"></i></span>
+                                            {{ form.password2 }}
+                                            {% if form.password2.errors %}
+                                                <div class="text-danger">
+                                                    {{ form.password2.errors }}
+                                                </div>
+                                            {% endif %}
+										</div>
+									</div>
+									  <div class="row">
+										<!-- /.col -->
+										<div class="col-12 text-center">
+										  <button type="submit" class="btn btn-info margin-top-10">Register</button>
+										</div>
+										<!-- /.col -->
+									  </div>
+								</form>				
+								
+							</div>
+						</div>								
+					</div>
+				</div>
+			</div>			
+		</div>
+	</div>
+		<!-- /.content -->
+{% endblock main-content %}

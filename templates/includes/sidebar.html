@@ -1,0 +1,64 @@
+{% load static %}
+<aside class="main-sidebar">
+    <!-- sidebar-->
+    <section class="sidebar position-relative">	
+		<div class="user-profile px-40 py-15">
+			<div class="d-flex align-items-center">			
+				<div class="image">
+				  <img src="{% static 'images/avatar/1.jpg' %}" class="avatar avatar-lg" alt="User Image">
+				</div>
+				<div class="info ms-10">
+					<p class="mb-0">Welcome</p>
+					<h5 class="mb-0">Joan Wilkins</h5>
+				</div>
+			</div>
+        </div>
+	  	<div class="multinav">
+		  <div class="multinav-scroll" style="height: 100%;">	
+			  <!-- sidebar menu-->
+			  <ul class="sidebar-menu" data-widget="tree">
+				<li class="header">Menu </li>
+				<li>
+				  <a href="{% url 'loans:home' %}">
+					<img src="https://master-admin-template.multipurposethemes.com/bs5/images/svg-icon/dashboard.svg" class="svg-icon" alt="">
+					<span>Dashboard</span>
+				  </a>
+				</li>
+				<li class="treeview">
+				  <a href="#">
+					<img src="https://master-admin-template.multipurposethemes.com/bs5/images/svg-icon/tables.svg" class="svg-icon" alt="">
+					<span>Loans Management</span>
+					<span class="pull-right-container">
+					  <i class="fa fa-angle-right pull-right"></i>
+					</span>
+				  </a>
+				  <ul class="treeview-menu">
+					<li><a href="{% url 'loans:loanproduct-list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Loan Types</a></li>
+					<li><a href="{% url 'loans:loanapplication-list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Loan Application</a></li>
+					<li><a href="{% url 'loans:repayment-list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Repayment</a></li>
+					<li><a href="{% url 'loans:loan-disbursement-list' %}"><i class="icon-Commit"><span class="path1"></span><span class="path2"></span></i>Disbursement</a></li>
+				  </ul>
+				</li>
+				<li>
+				  <a href="{% url 'clients:client_list' %}">
+					<img src="https://master-admin-template.multipurposethemes.com/bs5/images/svg-icon/email.svg" class="svg-icon" alt="">
+					<span>Clients</span>
+				  </a>
+				</li>
+				<li>
+				  <a href="{% url 'branches:branch_list' %}">
+					<img src="https://master-admin-template.multipurposethemes.com/bs5/images/svg-icon/email.svg" class="svg-icon" alt="">
+					<span>Branches</span>
+				  </a>
+				</li> 	     
+			  </ul>
+			  
+			  <div class="sidebar-widgets">				
+				<div class="copyright text-start m-25">
+					<p><strong class="d-block">EasyFund4You</strong> © 2025 All Rights Reserved</p>
+				</div>
+			  </div>
+		  </div>
+		</div>
+    </section>
+  </aside>

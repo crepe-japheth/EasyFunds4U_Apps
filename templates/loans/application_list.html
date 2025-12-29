@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+  {% block main-content %}
+		<!-- Content Header (Page header) -->
+		<div class="content-header">
+			<div class="d-flex align-items-center">
+				<div class="me-auto">
+					<h4 class="page-title">Loan Applications List</h4>
+					<div class="d-inline-block align-items-center">
+						<nav>
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
+								<li class="breadcrumb-item" aria-current="page">Loans</li>
+								<li class="breadcrumb-item active" aria-current="page">Application Tables</li>
+							</ol>
+						</nav>
+						
+					</div>
+				</div>
+				<div class="mt-3">	
+					<a href="{% url 'loans:loanapplication-create' %}" class="btn btn-success"> <i class="glyphicon glyphicon-plus"></i>New Application</a>	
+				 </div>
+				
+			</div>
+		</div>
+
+		<!-- Main content -->
+		<section class="content">
+
+		  <div class="row">
+
+
+			<div class="col-12">
+			  <div class="box">
+				<div class="box-header with-border">
+				  <h4 class="box-title">Application Table</h4>
+				  <div class="box-controls pull-right">
+					<div class="lookup lookup-circle lookup-right">
+					  <input type="text" name="s">
+					</div>
+				  </div>
+				</div>
+				<!-- /.box-header -->
+				<div class="box-body no-padding">
+					<div class="table-responsive">
+					  <table class="table table-hover">
+						<tr>
+						  <th>NO</th>
+						  <th>Client</th>
+						  <th>Loan Product</th>
+						  <th>Amount Requested</th>
+						  <th>Application Date</th>
+						  <th>Status</th>
+						  <th>Action</th>
+						</tr>
+                        {% for application in applications %}
+                        <tr>
+						  <td><a href="javascript:void(0)">{{forloop.counter}}</a></td>
+						  <td>{{application.client}}</td>
+						  <td> {{application.loan_product}} </td>
+						  <td> {{application.amount_requested}} </td>
+						  <td><span class="text-muted">{{application.application_date}}</span> </td>
+						  <td><span class="badge badge-pill {% if application.status == 'PENDING' %}badge-warning{% elif application.status == 'APPROVED' %}badge-success{% elif application.status == 'REJECTED'%}badge-danger{%else%}badge-secondary{% endif %}">{{application.status}}</span></td>
+						  <td>
+							<a href="{% url 'loans:loanapplication-detail' application.id %}">
+								<i class="glyphicon glyphicon-eye-open text-info me-4" data-bs-toggle="tooltip" title="View"></i>
+							</a>
+							<a href="{% url 'loans:loanapplication-update' application.id %}">
+								<i class="glyphicon glyphicon-edit text-warning me-4" data-bs-toggle="tooltip" title="Edit"></i>
+							</a>
+							<a href="#">
+								<i class="glyphicon glyphicon-trash text-danger me-4" data-bs-toggle="tooltip" title="Delete"></i>
+							</a>
+							<a href="{% url 'loans:loanapplication-approve' application.id %}">
+								<i class="glyphicon glyphicon-saved text-success me-4" data-bs-toggle="tooltip" title="Approve/Deny"></i>
+							</a>
+						  </td>
+						</tr>
+                        {% empty %}
+                        <tr>
+                          <td colspan="7">No Loans Disbursement found.</td>
+                        </tr>
+                        {% endfor %}
+					  </table>
+					</div>
+				</div>
+				<!-- /.box-body -->
+			  </div>
+			  <!-- /.box -->
+			</div>
+
+			
+		  </div>
+		  <!-- /.row -->
+
+		</section>
+		<!-- /.content -->
+  {% endblock main-content %}  

@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+{% load static %}
+{% block main-content %}
+		<!-- Content Header (Page header) -->	  
+		<div class="content-header">
+			<div class="d-flex align-items-center">
+				<div class="me-auto">
+					<h4 class="page-title">Profile</h4>
+					<div class="d-inline-block align-items-center">
+						<nav>
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
+								<li class="breadcrumb-item" aria-current="page">Client</li>
+								<li class="breadcrumb-item active" aria-current="page">Profile</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+				
+			</div>
+		</div>
+
+		<!-- Main content -->
+		<section class="content">
+
+		  <div class="row">
+			<div class="col-12 col-lg-7 col-xl-8">
+				
+			  <div class="nav-tabs-custom">
+				<ul class="nav nav-tabs">
+				  <li><a class="active" href="#Transaction" data-bs-toggle="tab">Transaction</a></li>
+				  <li><a href="#usertimeline" data-bs-toggle="tab">Loan History</a></li>
+				  <li><a href="#activity" data-bs-toggle="tab">Account Activity</a></li>
+				  <li><a href="#settings" data-bs-toggle="tab">Account Documents</a></li>
+				  <li><a href="#disbursement" data-bs-toggle="tab">Loan Disbursement</a></li>
+				</ul>
+
+				<div class="tab-content">
+
+				    <div class="tab-pane" id="usertimeline"> 
+						<h3 class="box-title mb-20">Loan History</h3>
+				    </div>    
+				    <div class="active tab-pane" id="Transaction"> 
+						<h3 class="box-title mb-20">Client Transaction</h3>
+				    </div>    
+				    <div class="tab-pane" id="activity"> 
+						<h3 class="box-title mb-20">Client Activity</h3>
+				    </div>  
+					<div class="tab-pane" id="settings">		
+						<h3 class="box-title mb-20">Account Documents</h3>		  
+					</div>
+					<div class="tab-pane" id="disbursement">		
+						<h3 class="box-title mb-20">Loan Disbursement</h3>		  
+					</div>
+				  <!-- /.tab-pane -->
+				</div>
+				<!-- /.tab-content -->
+			  </div>
+			  <!-- /.nav-tabs-custom -->
+			</div>
+			<!-- /.col -->		
+
+			  <div class="col-12 col-lg-5 col-xl-4">
+				 <div class="box box-widget widget-user">
+					<!-- Add the bg color to the header using any of the bg-* classes -->
+					<div class="widget-user-header bg-img bbsr-0 bber-0" style="background: url({% static 'images/gallery/full/10.jpg' %}) center center;" data-overlay="5">
+					  <h3 class="widget-user-username text-white">{{branch.name}}</h3>
+					  <h6 class="widget-user-desc text-white">{{branch.location}}</h6>
+					</div>
+					<div class="widget-user-image">
+					  <img class="rounded-circle" src="{% static 'images/user3-128x128.jpg' %}" alt="User Avatar">
+					</div>
+					<div class="box-footer">
+					  <div class="row">
+						<div class="col-sm-4">
+						  <div class="description-block">
+							<h5 class="description-header">12K</h5>
+							<span class="description-text">FOLLOWERS</span>
+						  </div>
+						  <!-- /.description-block -->
+						</div>
+						<!-- /.col -->
+						<div class="col-sm-4 be-1 bs-1">
+						  <div class="description-block">
+							<h5 class="description-header">550</h5>
+							<span class="description-text">FOLLOWERS</span>
+						  </div>
+						  <!-- /.description-block -->
+						</div>
+						<!-- /.col -->
+						<div class="col-sm-4">
+						  <div class="description-block">
+							<h5 class="description-header">158</h5>
+							<span class="description-text">TWEETS</span>
+						  </div>
+						  <!-- /.description-block -->
+						</div>
+						<!-- /.col -->
+					  </div>
+					  <!-- /.row -->
+					</div>
+				  </div>
+				  <div class="box">
+					<div class="box-body box-profile">            
+					  <div class="row">
+						<div class="col-12">
+							<div>
+								<p>Email :<span class="text-gray ps-10">David@yahoo.com</span> </p>
+								<p>Phone :<span class="text-gray ps-10">{{branch.phone}}</span></p>
+								<p>Address :<span class="text-gray ps-10">{{branch.phone}}</span></p>
+							</div>
+						</div>
+						<div class="col-12">
+							<div class="pb-15">						
+								
+								<div class="user-social-acount">
+									<span class="badge badge-pill badge-success">Active</span>
+									<span class="badge badge-pill badge-warning">Since - 2025</span>
+									<span class="badge badge-pill badge-danger">Down Town</span>
+								</div>
+							</div>
+						</div>
+						<div class="col-12">
+							<strong><i class="fa fa-book mr-1"></i> About Me</strong></p>
+						</div>
+					  </div>
+					</div>
+					<!-- /.box-body -->
+				  </div>
+				
+			  </div>
+
+		  </div>
+		  <!-- /.row -->
+
+		</section>
+		<!-- /.content -->
+{% endblock main-content %}

@@ -1,0 +1,246 @@
+﻿{% extends "base.html" %}
+		{% block main-content %}
+		<section class="content">			
+			<div class="row">
+				<div class="col-xl-4 col-12">
+					<div class="box box-body bg-primary">
+					  <h4>
+						<span>Total Applied Loan</span>
+						<span class="float-end"><a class="btn btn-xs btn-danger" href="{% url 'loans:loanapplication-list' %}">View</a></span>
+					  </h4>
+					  <br>
+					  <p class="fs-30">${{ total_applied|floatformat:2|default:"0.00" }}</p>
+					  <div class="fs-16">
+						{% if applied_change >= 0 %}
+							<i class="ion-arrow-graph-up-right text-white me-1"></i> {{ applied_change|floatformat:1 }}% increase from last month
+						{% else %}
+							<i class="ion-arrow-graph-down-right text-white me-1"></i> {{ applied_change|floatformat:1|slice:"1:" }}% decrease from last month
+						{% endif %}
+					  </div>
+					</div>
+				</div>
+				<div class="col-xl-4 col-12">
+					<div class="box box-body bg-info">
+					  <h4>
+						<span>Total Disbursed Amount</span>
+						<span class="float-end"><a class="btn btn-xs btn-warning" href="{% url 'loans:loan-disbursement-list' %}">View</a></span>
+					  </h4>
+					  <br>
+					  <p class="fs-30">${{ total_disbursed|floatformat:2|default:"0.00" }}</p>
+					  <div class="fs-16">
+						{% if disbursed_change >= 0 %}
+							<i class="ion-arrow-graph-up-right text-white me-1"></i> {{ disbursed_change|floatformat:1 }}% increase from last month
+						{% else %}
+							<i class="ion-arrow-graph-down-right text-danger me-1"></i> {{ disbursed_change|floatformat:1|slice:"1:" }}% decrease from last month
+						{% endif %}
+					  </div>
+					</div>
+				</div>				
+				<div class="col-xl-4 col-12">
+					<div class="box box-body bg-secondary">
+					  <h4>
+						<span>Total Repaid</span>
+						<span class="float-end"><a class="btn btn-xs btn-primary" href="{% url 'loans:repayment-list' %}">View</a></span>
+					  </h4>
+					  <br>
+					  <p class="fs-30">${{ total_repaid|floatformat:2|default:"0.00" }}</p>
+					  <div class="fs-16">
+						{% if repaid_change >= 0 %}
+							<i class="ion-arrow-graph-up-right text-white me-1"></i> {{ repaid_change|floatformat:1 }}% increase from last month
+						{% else %}
+							<i class="ion-arrow-graph-down-right text-white me-1"></i> {{ repaid_change|floatformat:1|slice:"1:" }}% decrease from last month
+						{% endif %}
+					  </div>
+					</div>
+				</div>				
+				{% comment %} <div class="col-xl-7 col-12">
+					<div class="box">
+						<div class="box-header">
+							<h4 class="box-title">Audience</h4>
+							<div class="box-controls pull-right">
+								<button class="btn btn-outline btn-xs mx-10">Week</button>
+								<button class="btn btn-outline btn-xs">Month</button>
+							</div>
+						</div>
+						<div class="box-body">
+							<div class="pt-20 d-lg-flex d-block align-items-center justify-content-between">
+								<div>
+									<label>Users</label>
+									<h2 class="mt-0">15,125</h2>
+								</div>
+								<div>
+									<label>Bounce Rate</label>
+									<h2 class="mt-0">25.50%</h2>
+								</div>
+								<div>
+									<label>Page Views</label>
+									<h2 class="mt-0">75,951</h2>
+								</div>
+								<div>
+									<label>Sessions</label>
+									<h2 class="mt-0">14,125</h2>
+								</div>
+							</div>
+							<div>
+								<div id="flotChart" class="flot-chart h-350"></div>
+							</div>
+						</div>
+					</div>
+				</div> {% endcomment %}
+				<div class="col-xl-7 col-12">
+					<div class="box">
+						<div class="box-header no-border">
+							<h4 class="box-title">
+								Total Loan Growth
+							</h4>
+						</div>
+						<div class="box-body pt-0">
+							<div id="growth"></div>
+						</div>
+					</div>										
+				</div>
+				<div class="col-xl-5 col-12">
+					<div class="box">
+						<div class="box-header">
+							<h4 class="box-title">Last Week</h4>
+						</div>
+						<div class="box-body">
+							<div id="userflow"></div>
+						</div>
+					</div>
+				</div>
+				<div class="col-xl-3 col-12">
+					<div class="box">
+					  <div class="box-header">
+						<h4 class="box-title">Today's Statistics</h4>
+					  </div>
+					  <div class="box-body">
+						<div class="d-flex justify-content-between align-items-center">
+						    <div>
+								<h1 class="my-0 text-dark">${{ today_repaid|floatformat:0|default:"0" }}</h1>
+								<p class="text-dark mb-0">Today Payment</p>
+							</div>
+						    <div class="bg-info px-30 py-10 text-center rounded"><i class="ti-arrow-down text-white"></i></div>
+						</div>
+					  </div>
+					</div>
+					<div class="box bg-warning">
+						<div class="box-body">
+							<div class="d-flex justify-content-between align-items-center">
+								<div>									
+									<h1 class="mb-0">${{ today_applied|floatformat:0|default:"0" }}</h1>
+									<p>Today Loan Applied</p>
+								</div>
+								<div id="visitors-char"></div>
+							</div>
+						</div>
+					</div>
+					<div class="box">
+					  <div class="box-body">
+						<div class="d-flex justify-content-between align-items-center">
+						    <div>
+								<h1 class="my-0">${{ today_disbursed|floatformat:0|default:"0" }}</h1>
+								<p class="mb-0">Today Disbursed</p>
+							</div>
+						    <div class="bg-success px-30 py-10 text-center rounded"><i class="ti-arrow-up text-white"></i></div>
+						</div>
+					  </div>
+					  <div class="progress progress-sm rounded-0 mt-5 mb-0">
+						{% if total_disbursed > 0 %}
+							{% widthratio total_repaid total_disbursed 100 as repayment_percentage %}
+							<div class="progress-bar bg-success rounded-0" role="progressbar" style="width: {{ repayment_percentage }}%;" aria-valuenow="{{ repayment_percentage }}" aria-valuemin="0" aria-valuemax="100"></div>
+						{% else %}
+							<div class="progress-bar bg-success rounded-0" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+						{% endif %}
+					  </div>
+					</div>
+				</div>
+				<div class="col-xl-6 col-12">
+					<div class="box">
+						<div class="box-header no-border">
+							<h4 class="box-title">
+								Recent Activities
+							</h4>
+						</div>
+						<div class="chat-box-one-side3">
+							<div class="media-list media-list-hover">
+								{% for application in recent_applications %}
+								<div class="media">
+									<a class="align-self-center me-0" href="{% url 'loans:loanapplication-detail' application.pk %}">
+										<div class="avatar avatar-lg bg-primary text-white d-flex align-items-center justify-content-center">
+											{{ application.client.first_name|first }}{{ application.client.last_name|first|default:"" }}
+										</div>
+									</a>
+									<div class="media-body">
+										<p>
+											<a class="hover-primary" href="{% url 'loans:loanapplication-detail' application.pk %}">
+												<strong>{{ application.client }}</strong>
+											</a>
+											<span class="float-end fs-10">{{ application.created_at|date:"M d, Y" }}</span>
+										</p>
+										<p>
+											{{ application.loan_product.name }} - ${{ application.amount_requested|floatformat:2 }}
+											<span class="badge badge-{% if application.status == 'APPROVED' %}success{% elif application.status == 'PENDING' %}warning{% elif application.status == 'REJECTED' %}danger{% else %}info{% endif %}">
+												{{ application.get_status_display }}
+											</span>
+										</p>
+									</div>
+								</div>
+								{% empty %}
+								<div class="media">
+									<div class="media-body">
+										<p class="text-muted">No recent applications</p>
+									</div>
+								</div>
+								{% endfor %}
+							</div>
+						</div>
+					</div>										
+				</div> 
+				
+				<div class="col-xl-3 col-lg-6 col-12">
+					<div class="box">
+						<div class="box-body">
+							<h4 class="box-title">Top Loan Products</h4>
+							<div id="earning-chart" class="min-h-250 py-25"></div>
+							<div>
+								<hr>
+								{% for product in loan_products %}
+								<p class="d-flex justify-content-between">
+									<span>{{ product.name }}:</span>
+									<strong>{{ product.loan_count }}</strong>
+								</p>
+								{% empty %}
+								<p class="text-muted">No loan products yet</p>
+								{% endfor %}
+								{% if loan_products|length == 0 %}
+								<p class="d-flex justify-content-between mb-0">
+									<span><a href="{% url 'loans:loanproduct-create' %}">Create Loan Product</a></span>
+								</p>
+								{% endif %}
+							</div>
+						</div>
+					</div>
+					<div class="box">
+						<div class="box-body">
+							<h4 class="box-title">Quick Stats</h4>
+							<div>
+								<p class="d-flex justify-content-between">
+									<span>Active Loans:</span>
+									<strong>{{ active_loans }}</strong>
+								</p>
+								<p class="d-flex justify-content-between">
+									<span>Pending Applications:</span>
+									<strong>{{ pending_applications }}</strong>
+								</p>
+								<p class="d-flex justify-content-between">
+									<span>Outstanding Balance:</span>
+									<strong>${{ outstanding_balance|floatformat:2|default:"0.00" }}</strong>
+								</p>
+							</div>
+						</div>
+					</div>										
+				</div>
+			</div>
+		</section>
+		{% endblock main-content %}

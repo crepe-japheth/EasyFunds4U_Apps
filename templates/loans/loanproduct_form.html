@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% block main-content %}
+		<!-- Content Header (Page header) -->
+		<div class="content-header">
+			<div class="d-flex align-items-center">
+				<div class="me-auto">
+					<h4 class="page-title">Loan Form</h4>
+					<div class="d-inline-block align-items-center">
+						<nav>
+							<ol class="breadcrumb">
+								<li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
+								<li class="breadcrumb-item" aria-current="page">Forms</li>
+								<li class="breadcrumb-item active" aria-current="page">Loans</li>
+							</ol>
+						</nav>
+					</div>
+				</div>
+				
+			</div>
+		</div>	  
+
+		<!-- Main content -->
+		<section class="content">
+			<div class="row">			  
+				<div class="col-lg-12 col-12">
+					  <div class="box">
+						<div class="box-header with-border">
+						  <h4 class="box-title">Add Loan Form</h4>
+						</div>
+						<!-- /.box-header -->
+						<form class="form" method="post" action="#">
+							{% csrf_token %}
+							<!-- Non-field errors (form-wide) -->
+							{% if form.non_field_errors %}
+								<div class="alert alert-danger">
+									{{ form.non_field_errors }}
+								</div>
+							{% endif %}
+							<div class="box-body">
+								<h4 class="box-title text-info mb-0"><i class="ti-user me-15"></i> Loan Info</h4>
+								<hr class="my-15">
+								<div class="row">
+								  <div class="col-md-6">
+									<div class="form-group">
+									  	<label class="form-label">{{form.name.label_tag}}</label>
+									  	{{form.name}}
+									  	{% if form.name.errors %}
+											<div class="text-danger">
+												{{ form.name.errors }}
+											</div>
+									  	{% endif %}
+									</div>
+								  </div>
+								  <div class="col-md-6">
+									<div class="form-group">
+									  	<label class="form-label">{{form.interest_rate.label_tag}} </label>
+										{{form.interest_rate}}
+									  	{% if form.interest_rate.errors %}
+											<div class="text-danger">
+												{{ form.interest_rate.errors }}
+											</div>
+										{% endif %}
+									</div>
+								  </div>
+								</div>
+								<div class="row">
+								  <div class="col-md-6">
+									<div class="form-group">
+										<label class="form-label">{{form.duration_months.label_tag}}</label>
+									  	{{form.duration_months}}
+									  	{% if form.duration_months.errors %}
+											<div class="text-danger">
+												{{ form.duration_months.errors }}
+											</div>
+									  	{% endif %}
+									</div>
+								  </div>
+								  <div class="col-md-6">
+									<div class="form-group">
+									  	<label class="form-label">{{form.repayment_frequency.label_tag}}</label>
+									  	{{form.repayment_frequency}}
+										{% if form.repayment_frequency.errors %}
+											<div class="text-danger">
+												{{ form.repayment_frequency.errors }}
+											</div>
+									  	{% endif %}
+									</div>
+								  </div>
+								</div>
+								<h4 class="box-title text-info mb-0 mt-20"><i class="ti-save me-15"></i> Requirements</h4>
+								<hr class="my-15">
+								<div class="form-group">
+								  	<label class="form-label">{{form.max_amount.label_tag}}</label>
+								  	{{form.max_amount}}
+									{% if form.max_amount.errors %}
+										<div class="text-danger">
+											{{ form.max_amount.errors }}
+										</div>
+									{% endif %}
+								</div>
+								
+
+								<div class="form-group">
+								  <label class="form-label">{{form.description.label_tag}}</label>
+								  {{form.description}}
+								  {% if form.description.errors %}
+									  <div class="text-danger">
+										  {{ form.description.errors }}
+									  </div>
+								  {% endif %}
+								</div>
+							</div>
+							<!-- /.box-body -->
+							<div class="box-footer">
+								<button type="button" class="btn btn-warning me-1">
+								  <i class="ti-trash"></i> Cancel
+								</button>
+								<button type="submit" class="btn btn-primary">
+								  <i class="ti-save-alt"></i> Save
+								</button>
+							</div>  
+						</form>
+					  </div>
+					  <!-- /.box -->			
+				</div>  
+		    </div>
+			
+
+		</section>
+		<!-- /.content -->
+{% endblock main-content %}
