@@ -24,6 +24,7 @@ from loans.views import (
     # loan repayment views
     RepaymentCreateView,
     RepaymentListView,
+    RepaymentDetailView,
 )
 app_name = "loans"
 
@@ -51,7 +52,8 @@ urlpatterns = [
 
     # loan repayment views
     path("repayments/new/", RepaymentCreateView.as_view(), name="repayment-create"),  
-    path("repayments/", RepaymentListView.as_view(), name="repayment-list"),  
+    path("repayments/", RepaymentListView.as_view(), name="repayment-list"),
+    path("repayments/<int:pk>/", RepaymentDetailView.as_view(), name="repayment-detail"),  
 
 
     

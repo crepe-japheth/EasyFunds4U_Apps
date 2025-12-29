@@ -1,0 +1,361 @@
+{% extends "base.html" %}
+{% load static %}
+{% block main-content %}
+	<!-- Content Header (Page header) -->	  
+	<div class="content-header">
+		<div class="d-flex align-items-center">
+			<div class="me-auto">
+				<h4 class="page-title">Loan Product Details</h4>
+				<div class="d-inline-block align-items-center">
+					<nav>
+						<ol class="breadcrumb">
+							<li class="breadcrumb-item"><a href="{% url 'loans:home' %}"><i class="mdi mdi-home-outline"></i> Home</a></li>
+							<li class="breadcrumb-item"><a href="{% url 'loans:loanproduct-list' %}">Loan Products</a></li>
+							<li class="breadcrumb-item active" aria-current="page">{{ loanproduct.name }}</li>
+						</ol>
+					</nav>
+				</div>
+			</div>
+			<div class="mt-3">	
+				<a href="{% url 'loans:loanproduct-update' loanproduct.id %}" class="btn btn-warning me-2">
+					<i class="glyphicon glyphicon-edit"></i> Edit
+				</a>
+				<a href="{% url 'loans:loanproduct-list' %}" class="btn btn-secondary">
+					<i class="glyphicon glyphicon-arrow-left"></i> Back to List
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<!-- Main content -->
+	<section class="content">
+		<div class="row">
+			<!-- Left Column - Product Information -->
+			<div class="col-12 col-lg-8">
+				<!-- Product Details Card -->
+				<div class="box">
+					<div class="box-header with-border">
+						<h4 class="box-title">Product Information</h4>
+					</div>
+					<div class="box-body">
+						<div class="row">
+							<div class="col-md-6">
+								<table class="table table-borderless">
+									<tr>
+										<td><strong>Product Name:</strong></td>
+										<td>{{ loanproduct.name }}</td>
+									</tr>
+									<tr>
+										<td><strong>Interest Rate:</strong></td>
+										<td><span class="badge badge-info">{{ loanproduct.interest_rate }}%</span></td>
+									</tr>
+									<tr>
+										<td><strong>Duration:</strong></td>
+										<td>{{ loanproduct.duration_months }} months</td>
+									</tr>
+									<tr>
+										<td><strong>Repayment Frequency:</strong></td>
+										<td><span class="badge badge-success">{{ loanproduct.get_repayment_frequency_display }}</span></td>
+									</tr>
+								</table>
+							</div>
+							<div class="col-md-6">
+								<table class="table table-borderless">
+									<tr>
+										<td><strong>Maximum Amount:</strong></td>
+										<td><strong class="text-primary">${{ loanproduct.max_amount|floatformat:2 }}</strong></td>
+									</tr>
+									<tr>
+										<td><strong>Created By:</strong></td>
+										<td>{{ loanproduct.created_by.get_full_name|default:loanproduct.created_by.username|default:"N/A" }}</td>
+									</tr>
+									<tr>
+										<td><strong>Created At:</strong></td>
+										<td>{{ loanproduct.created_at|date:"F d, Y" }}</td>
+									</tr>
+									<tr>
+										<td><strong>Last Updated:</strong></td>
+										<td>{{ loanproduct.updated_at|date:"F d, Y" }}</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+						{% if loanproduct.description %}
+						<div class="row mt-3">
+							<div class="col-12">
+								<h5>Description</h5>
+								<p class="text-muted">{{ loanproduct.description }}</p>
+							</div>
+						</div>
+						{% endif %}
+					</div>
+				</div>
+
+				<!-- Statistics Cards -->
+				<div class="row">
+					<div class="col-md-3 col-6">
+						<div class="box box-body bg-primary">
+							<h4 class="text-white">Total Applications</h4>
+							<h2 class="text-white mb-0">{{ total_applications }}</h2>
+						</div>
+					</div>
+					<div class="col-md-3 col-6">
+						<div class="box box-body bg-info">
+							<h4 class="text-white">Total Disbursed</h4>
+							<h2 class="text-white mb-0">${{ total_disbursed|floatformat:0|default:"0" }}</h2>
+						</div>
+					</div>
+					<div class="col-md-3 col-6">
+						<div class="box box-body bg-success">
+							<h4 class="text-white">Active Loans</h4>
+							<h2 class="text-white mb-0">{{ active_loans }}</h2>
+						</div>
+					</div>
+					<div class="col-md-3 col-6">
+						<div class="box box-body bg-warning">
+							<h4 class="text-white">Outstanding</h4>
+							<h2 class="text-white mb-0">${{ outstanding_balance|floatformat:0|default:"0" }}</h2>
+						</div>
+					</div>
+				</div>
+
+				<!-- Application Status Breakdown -->
+				<div class="box">
+					<div class="box-header with-border">
+						<h4 class="box-title">Application Status</h4>
+					</div>
+					<div class="box-body">
+						<div class="row">
+							<div class="col-md-3">
+								<div class="text-center">
+									<h3 class="text-warning">{{ pending_applications }}</h3>
+									<p class="text-muted">Pending</p>
+								</div>
+							</div>
+							<div class="col-md-3">
+								<div class="text-center">
+									<h3 class="text-info">{{ approved_applications }}</h3>
+									<p class="text-muted">Approved</p>
+								</div>
+							</div>
+							<div class="col-md-3">
+								<div class="text-center">
+									<h3 class="text-danger">{{ rejected_applications }}</h3>
+									<p class="text-muted">Rejected</p>
+								</div>
+							</div>
+							<div class="col-md-3">
+								<div class="text-center">
+									<h3 class="text-success">{{ disbursed_applications }}</h3>
+									<p class="text-muted">Disbursed</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Recent Applications -->
+				<div class="box">
+					<div class="box-header with-border">
+						<h4 class="box-title">Recent Applications</h4>
+						<div class="box-controls pull-right">
+							<a href="{% url 'loans:loanapplication-list' %}?product={{ loanproduct.id }}" class="btn btn-sm btn-primary">View All</a>
+						</div>
+					</div>
+					<div class="box-body">
+						<div class="table-responsive">
+							<table class="table table-hover">
+								<thead>
+									<tr>
+										<th>Client</th>
+										<th>Amount</th>
+										<th>Date</th>
+										<th>Status</th>
+										<th>Branch</th>
+										<th>Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for application in recent_applications %}
+									<tr>
+										<td>{{ application.client }}</td>
+										<td>${{ application.amount_requested|floatformat:2 }}</td>
+										<td>{{ application.application_date|date:"M d, Y" }}</td>
+										<td>
+											<span class="badge badge-{% if application.status == 'APPROVED' %}success{% elif application.status == 'PENDING' %}warning{% elif application.status == 'REJECTED' %}danger{% else %}info{% endif %}">
+												{{ application.get_status_display }}
+											</span>
+										</td>
+										<td>{{ application.branch.name|default:"N/A" }}</td>
+										<td>
+											<a href="{% url 'loans:loanapplication-detail' application.id %}" class="btn btn-xs btn-info">
+												<i class="glyphicon glyphicon-eye-open"></i> View
+											</a>
+										</td>
+									</tr>
+									{% empty %}
+									<tr>
+										<td colspan="6" class="text-center text-muted">No applications found</td>
+									</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+
+				<!-- Active Loans -->
+				<div class="box">
+					<div class="box-header with-border">
+						<h4 class="box-title">Active Loans</h4>
+						<div class="box-controls pull-right">
+							<a href="{% url 'loans:loan-disbursement-list' %}?product={{ loanproduct.id }}" class="btn btn-sm btn-primary">View All</a>
+						</div>
+					</div>
+					<div class="box-body">
+						<div class="table-responsive">
+							<table class="table table-hover">
+								<thead>
+									<tr>
+										<th>Client</th>
+										<th>Disbursed</th>
+										<th>Balance</th>
+										<th>Due Date</th>
+										<th>Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for loan in active_loans_list %}
+									<tr>
+										<td>{{ loan.loan_application.client }}</td>
+										<td>${{ loan.disbursed_amount|floatformat:2 }}</td>
+										<td><strong class="text-warning">${{ loan.balance|floatformat:2 }}</strong></td>
+										<td>{{ loan.due_date|date:"M d, Y" }}</td>
+										<td>
+											<a href="{% url 'loans:loan-detail' loan.id %}" class="btn btn-xs btn-info">
+												<i class="glyphicon glyphicon-eye-open"></i> View
+											</a>
+										</td>
+									</tr>
+									{% empty %}
+									<tr>
+										<td colspan="5" class="text-center text-muted">No active loans</td>
+									</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Right Column - Summary & Actions -->
+			<div class="col-12 col-lg-4">
+				<!-- Summary Card -->
+				<div class="box">
+					<div class="box-header with-border">
+						<h4 class="box-title">Summary</h4>
+					</div>
+					<div class="box-body">
+						<div class="list-group">
+							<div class="list-group-item d-flex justify-content-between align-items-center">
+								<span>Total Requested</span>
+								<strong>${{ total_requested|floatformat:2|default:"0.00" }}</strong>
+							</div>
+							<div class="list-group-item d-flex justify-content-between align-items-center">
+								<span>Total Disbursed</span>
+								<strong class="text-info">${{ total_disbursed|floatformat:2|default:"0.00" }}</strong>
+							</div>
+							<div class="list-group-item d-flex justify-content-between align-items-center">
+								<span>Total Repaid</span>
+								<strong class="text-success">${{ total_repaid|floatformat:2|default:"0.00" }}</strong>
+							</div>
+							<div class="list-group-item d-flex justify-content-between align-items-center">
+								<span>Outstanding Balance</span>
+								<strong class="text-warning">${{ outstanding_balance|floatformat:2|default:"0.00" }}</strong>
+							</div>
+							<div class="list-group-item d-flex justify-content-between align-items-center">
+								<span>Active Loans</span>
+								<strong>{{ active_loans }}</strong>
+							</div>
+							<div class="list-group-item d-flex justify-content-between align-items-center">
+								<span>Closed Loans</span>
+								<strong>{{ closed_loans }}</strong>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Quick Actions -->
+				<div class="box">
+					<div class="box-header with-border">
+						<h4 class="box-title">Quick Actions</h4>
+					</div>
+					<div class="box-body">
+						<a href="{% url 'loans:loanapplication-create' %}" class="btn btn-success btn-block mb-2">
+							<i class="glyphicon glyphicon-plus"></i> New Application
+						</a>
+						<a href="{% url 'loans:loanproduct-update' loanproduct.id %}" class="btn btn-warning btn-block mb-2">
+							<i class="glyphicon glyphicon-edit"></i> Edit Product
+						</a>
+						<a href="{% url 'loans:loanapplication-list' %}?product={{ loanproduct.id }}" class="btn btn-info btn-block mb-2">
+							<i class="glyphicon glyphicon-list"></i> View All Applications
+						</a>
+						<a href="{% url 'loans:loan-disbursement-list' %}?product={{ loanproduct.id }}" class="btn btn-primary btn-block">
+							<i class="glyphicon glyphicon-list"></i> View All Loans
+						</a>
+					</div>
+				</div>
+
+				<!-- Product Performance -->
+				<div class="box">
+					<div class="box-header with-border">
+						<h4 class="box-title">Performance Metrics</h4>
+					</div>
+					<div class="box-body">
+						{% if total_disbursed > 0 %}
+						<div class="mb-3">
+							<label>Repayment Rate</label>
+							<div class="progress">
+								{% widthratio total_repaid total_disbursed 100 as repayment_rate %}
+								<div class="progress-bar bg-success" role="progressbar" style="width: {{ repayment_rate }}%">
+									{{ repayment_rate }}%
+								</div>
+							</div>
+							<small class="text-muted">{{ total_repaid|floatformat:2 }} / {{ total_disbursed|floatformat:2 }}</small>
+						</div>
+						{% endif %}
+						
+						{% if total_applications > 0 %}
+						<div class="mb-3">
+							<label>Approval Rate</label>
+							<div class="progress">
+								{% widthratio approved_applications total_applications 100 as approval_rate %}
+								<div class="progress-bar bg-info" role="progressbar" style="width: {{ approval_rate }}%">
+									{{ approval_rate }}%
+								</div>
+							</div>
+							<small class="text-muted">{{ approved_applications }} / {{ total_applications }} applications</small>
+						</div>
+						{% endif %}
+
+						{% if total_applications > 0 %}
+						<div>
+							<label>Disbursement Rate</label>
+							<div class="progress">
+								{% widthratio disbursed_applications total_applications 100 as disbursement_rate %}
+								<div class="progress-bar bg-primary" role="progressbar" style="width: {{ disbursement_rate }}%">
+									{{ disbursement_rate }}%
+								</div>
+							</div>
+							<small class="text-muted">{{ disbursed_applications }} / {{ total_applications }} applications</small>
+						</div>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- /.content -->
+{% endblock main-content %}
+

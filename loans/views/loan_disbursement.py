@@ -45,11 +45,25 @@ class LoanDisbursementCreateView(LoginRequiredMixin, PermissionRequiredMixin, Cr
     def get_form(self, *args, **kwargs):
         form = super().get_form(*args, **kwargs)
         # Only show approved applications that haven't been disbursed
-        form.fields['loan_application'].queryset = LoanApplication.objects.filter(
+        queryset = LoanApplication.objects.filter(
             status='APPROVED'
         ).exclude(
             loan__isnull=False  # Exclude applications that already have a loan
         )
+        
+        # If application_id is provided in query params, pre-select it
+        application_id = self.request.GET.get('application')
+        if application_id:
+            try:
+                application = LoanApplication.objects.get(id=application_id, status='APPROVED')
+                if application not in queryset:
+                    # If it's already disbursed, still show it but disabled
+                    queryset = LoanApplication.objects.filter(id=application_id)
+                form.fields['loan_application'].initial = application
+            except LoanApplication.DoesNotExist:
+                pass
+        
+        form.fields['loan_application'].queryset = queryset
         return form
 
     def form_valid(self, form):
@@ -99,12 +113,61 @@ class LoanDetailView(LoginRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        loan = self.object
+        application = loan.loan_application
+        client = application.client
+        product = application.loan_product
+        
         # Get all repayments for this loan
-        context['repayments'] = self.object.repayment_set.all().order_by('-payment_date')
-        # Calculate total repaid
-        context['total_repaid'] = sum(rep.amount for rep in context['repayments'])
-        # Calculate remaining balance
-        context['remaining_balance'] = self.object.balance
+        from ..models import Repayment
+        repayments = Repayment.objects.filter(loan=loan).order_by('-payment_date')
+        context['repayments'] = repayments
+        
+        # Calculate totals
+        context['total_repaid'] = sum(rep.amount for rep in repayments)
+        context['remaining_balance'] = loan.balance
+        context['total_amount'] = loan.get_total_amount()
+        context['interest_amount'] = loan.get_interest_amount()
+        context['principal'] = loan.disbursed_amount
+        
+        # Calculate repayment percentage
+        if context['total_amount'] > 0:
+            context['repayment_percentage'] = (context['total_repaid'] / context['total_amount']) * 100
+        else:
+            context['repayment_percentage'] = 0
+        
+        # Days until due / days overdue
+        from django.utils import timezone
+        today = timezone.now().date()
+        days_until_due = (loan.due_date - today).days
+        context['days_until_due'] = days_until_due
+        context['is_overdue'] = days_until_due < 0
+        
+        # Get client's other loans
+        from ..models import Loan as LoanModel
+        client_other_loans = LoanModel.objects.filter(
+            loan_application__client=client
+        ).exclude(id=loan.id).order_by('-created_at')[:5]
+        context['client_other_loans'] = client_other_loans
+        
+        # Get client's active loans count
+        client_active_loans = LoanModel.objects.filter(
+            loan_application__client=client,
+            status='ACTIVE'
+        ).exclude(id=loan.id).count()
+        context['client_active_loans'] = client_active_loans
+        
+        # Payment statistics
+        if repayments.exists():
+            context['first_payment_date'] = repayments.last().payment_date
+            context['last_payment_date'] = repayments.first().payment_date
+            context['payment_count'] = repayments.count()
+            # Average payment amount
+            context['average_payment'] = context['total_repaid'] / context['payment_count']
+        else:
+            context['payment_count'] = 0
+            context['average_payment'] = 0
+        
         return context
 
     

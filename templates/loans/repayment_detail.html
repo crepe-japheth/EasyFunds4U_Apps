@@ -1,0 +1,565 @@
+{% extends "base.html" %}
+{% load static %}
+{% block main-content %}
+	<!-- Content Header (Page header) -->	  
+	<div class="content-header">
+		<div class="d-flex align-items-center">
+			<div class="me-auto">
+				<h4 class="page-title">Repayment Details</h4>
+				<div class="d-inline-block align-items-center">
+					<nav>
+						<ol class="breadcrumb">
+							<li class="breadcrumb-item"><a href="{% url 'loans:home' %}"><i class="mdi mdi-home-outline"></i> Home</a></li>
+							<li class="breadcrumb-item"><a href="{% url 'loans:repayment-list' %}">Repayments</a></li>
+							<li class="breadcrumb-item active" aria-current="page">Repayment #{{ repayment.id }}</li>
+						</ol>
+					</nav>
+				</div>
+			</div>
+			<div class="mt-3">	
+				<a href="{% url 'loans:loan-detail' loan.id %}" class="btn btn-info me-2">
+					<i class="glyphicon glyphicon-list"></i> View Loan
+				</a>
+				<a href="{% url 'loans:repayment-list' %}" class="btn btn-secondary">
+					<i class="glyphicon glyphicon-arrow-left"></i> Back to List
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<!-- Main content -->
+	<section class="content">
+		<div class="row">
+			<!-- Left Column - Repayment Information -->
+			<div class="col-12 col-lg-8">
+				<!-- Status Card -->
+				<div class="box">
+					<div class="box-body">
+						<div class="row">
+							<div class="col-md-8">
+								<h3 class="mb-0">Repayment #{{ repayment.id }}</h3>
+								<p class="text-muted mb-0">Loan #{{ loan.id }} - {{ client }}</p>
+							</div>
+							<div class="col-md-4 text-end">
+								<h2 class="text-success mb-0">${{ repayment.amount|floatformat:2 }}</h2>
+								<small class="text-muted">Payment Amount</small>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Repayment Details -->
+				<div class="box">
+					<div class="box-header with-border">
+						<h4 class="box-title">Payment Information</h4>
+					</div>
+					<div class="box-body">
+						<div class="row">
+							<div class="col-md-6">
+								<table class="table table-borderless">
+									<tr>
+										<td><strong>Payment Date:</strong></td>
+										<td>{{ repayment.payment_date|date:"F d, Y" }}</td>
+									</tr>
+									<tr>
+										<td><strong>Payment Amount:</strong></td>
+										<td><strong class="text-success">${{ repayment.amount|floatformat:2 }}</strong></td>
+									</tr>
+									<tr>
+										<td><strong>Payment Method:</strong></td>
+										<td><span class="badge badge-info">{{ repayment.get_method_display }}</span></td>
+									</tr>
+									<tr>
+										<td><strong>Payment Position:</strong></td>
+										<td>Payment {{ repayment_position }} of {{ total_repayments }}</td>
+									</tr>
+								</table>
+							</div>
+							<div class="col-md-6">
+								<table class="table table-borderless">
+									<tr>
+										<td><strong>Recorded By:</strong></td>
+										<td>
+											{% if repayment.created_by %}
+												{{ repayment.created_by.get_full_name|default:repayment.created_by.username }}
+											{% else %}
+												N/A
+											{% endif %}
+										</td>
+									</tr>
+									<tr>
+										<td><strong>Recorded At:</strong></td>
+										<td>{{ repayment.created_at|date:"F d, Y g:i A" }}</td>
+									</tr>
+									<tr>
+										<td><strong>Last Updated:</strong></td>
+										<td>{{ repayment.updated_at|date:"F d, Y g:i A" }}</td>
+									</tr>
+									<tr>
+										<td><strong>Payment Impact:</strong></td>
+										<td>{{ payment_percentage|floatformat:2 }}% of total loan</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Balance Impact -->
+				<div class="box">
+					<div class="box-header with-border">
+						<h4 class="box-title">Balance Impact</h4>
+					</div>
+					<div class="box-body">
+						<div class="row">
+							<div class="col-md-4">
+								<div class="box box-body bg-warning text-center">
+									<h4 class="text-white mb-0">${{ balance_before|floatformat:2 }}</h4>
+									<small class="text-white">Balance Before</small>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="box box-body bg-danger text-center">
+									<h4 class="text-white mb-0">-${{ repayment.amount|floatformat:2 }}</h4>
+									<small class="text-white">Payment Made</small>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="box box-body bg-success text-center">
+									<h4 class="text-white mb-0">${{ balance_after|floatformat:2 }}</h4>
+									<small class="text-white">Balance After</small>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Loan Information -->
+				<div class="box">
+					<div class="box-header with-border">
+						<h4 class="box-title">Loan Information</h4>
+						<div class="box-controls pull-right">
+							<a href="{% url 'loans:loan-detail' loan.id %}" class="btn btn-sm btn-primary">View Full Loan</a>
+						</div>
+					</div>
+					<div class="box-body">
+						<div class="row">
+							<div class="col-md-6">
+								<table class="table table-borderless">
+									<tr>
+										<td><strong>Loan ID:</strong></td>
+										<td><strong>#{{ loan.id }}</strong></td>
+									</tr>
+									<tr>
+										<td><strong>Disbursed Amount:</strong></td>
+										<td>${{ loan.disbursed_amount|floatformat:2 }}</td>
+									</tr>
+									<tr>
+										<td><strong>Total Amount:</strong></td>
+										<td><strong class="text-primary">${{ total_amount|floatformat:2 }}</strong></td>
+									</tr>
+									<tr>
+										<td><strong>Disbursement Date:</strong></td>
+										<td>{{ loan.disbursement_date|date:"F d, Y" }}</td>
+									</tr>
+								</table>
+							</div>
+							<div class="col-md-6">
+								<table class="table table-borderless">
+									<tr>
+										<td><strong>Status:</strong></td>
+										<td>
+											<span class="badge badge-{% if loan.status == 'ACTIVE' %}success{% elif loan.status == 'CLOSED' %}info{% else %}danger{% endif %}">
+												{{ loan.get_status_display }}
+											</span>
+										</td>
+									</tr>
+									<tr>
+										<td><strong>Due Date:</strong></td>
+										<td>{{ loan.due_date|date:"F d, Y" }}</td>
+									</tr>
+									<tr>
+										<td><strong>Total Repaid:</strong></td>
+										<td><strong class="text-success">${{ total_repaid|floatformat:2 }}</strong></td>
+									</tr>
+									<tr>
+										<td><strong>Outstanding Balance:</strong></td>
+										<td><strong class="text-danger">${{ remaining_balance|floatformat:2 }}</strong></td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Loan Product Details -->
+				<div class="box">
+					<div class="box-header with-border">
+						<h4 class="box-title">Loan Product Details</h4>
+						<div class="box-controls pull-right">
+							<a href="{% url 'loans:loanproduct-detail' product.id %}" class="btn btn-sm btn-info">View Product</a>
+						</div>
+					</div>
+					<div class="box-body">
+						<div class="row">
+							<div class="col-md-6">
+								<table class="table table-borderless">
+									<tr>
+										<td><strong>Product Name:</strong></td>
+										<td>{{ product.name }}</td>
+									</tr>
+									<tr>
+										<td><strong>Interest Rate:</strong></td>
+										<td><span class="badge badge-info">{{ product.interest_rate }}%</span></td>
+									</tr>
+									<tr>
+										<td><strong>Duration:</strong></td>
+										<td>{{ product.duration_months }} months</td>
+									</tr>
+								</table>
+							</div>
+							<div class="col-md-6">
+								<table class="table table-borderless">
+									<tr>
+										<td><strong>Repayment Frequency:</strong></td>
+										<td><span class="badge badge-success">{{ product.get_repayment_frequency_display }}</span></td>
+									</tr>
+									<tr>
+										<td><strong>Application Date:</strong></td>
+										<td>{{ application.application_date|date:"F d, Y" }}</td>
+									</tr>
+									<tr>
+										<td><strong>Amount Requested:</strong></td>
+										<td>${{ application.amount_requested|floatformat:2 }}</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Client Information -->
+				<div class="box">
+					<div class="box-header with-border">
+						<h4 class="box-title">Client Information</h4>
+						<div class="box-controls pull-right">
+							<a href="{% url 'clients:client_detail' client.id %}" class="btn btn-sm btn-info">View Full Profile</a>
+						</div>
+					</div>
+					<div class="box-body">
+						<div class="row">
+							<div class="col-md-6">
+								<table class="table table-borderless">
+									<tr>
+										<td><strong>Name:</strong></td>
+										<td>{{ client.first_name }} {{ client.last_name|default:"" }}</td>
+									</tr>
+									<tr>
+										<td><strong>Client Type:</strong></td>
+										<td><span class="badge badge-primary">{{ client.get_client_type_display }}</span></td>
+									</tr>
+									<tr>
+										<td><strong>National ID:</strong></td>
+										<td>{{ client.national_id }}</td>
+									</tr>
+								</table>
+							</div>
+							<div class="col-md-6">
+								<table class="table table-borderless">
+									<tr>
+										<td><strong>Phone Number:</strong></td>
+										<td>{{ client.phone_number }}</td>
+									</tr>
+									<tr>
+										<td><strong>Address:</strong></td>
+										<td>{{ client.address|default:"N/A" }}</td>
+									</tr>
+									<tr>
+										<td><strong>Status:</strong></td>
+										<td>
+											<span class="badge badge-{% if client.status == 'ACTIVE' %}success{% else %}secondary{% endif %}">
+												{{ client.get_status_display }}
+											</span>
+										</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- All Repayments for This Loan -->
+				<div class="box">
+					<div class="box-header with-border">
+						<h4 class="box-title">All Repayments for Loan #{{ loan.id }}</h4>
+						<div class="box-controls pull-right">
+							<a href="{% url 'loans:loan-detail' loan.id %}" class="btn btn-sm btn-primary">View Full Loan</a>
+						</div>
+					</div>
+					<div class="box-body">
+						<div class="table-responsive">
+							<table class="table table-hover">
+								<thead>
+									<tr>
+										<th>#</th>
+										<th>Payment Date</th>
+										<th>Amount</th>
+										<th>Method</th>
+										<th>Status</th>
+										<th>Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for pay in all_repayments %}
+									<tr class="{% if pay.id == repayment.id %}table-active{% endif %}">
+										<td>
+											{% if pay.id == repayment.id %}
+												<strong>{{ forloop.counter }} (Current)</strong>
+											{% else %}
+												{{ forloop.counter }}
+											{% endif %}
+										</td>
+										<td>{{ pay.payment_date|date:"M d, Y" }}</td>
+										<td>
+											{% if pay.id == repayment.id %}
+												<strong class="text-success">${{ pay.amount|floatformat:2 }}</strong>
+											{% else %}
+												${{ pay.amount|floatformat:2 }}
+											{% endif %}
+										</td>
+										<td><span class="badge badge-info">{{ pay.get_method_display }}</span></td>
+										<td>
+											{% if pay.id == repayment.id %}
+												<span class="badge badge-success">Current</span>
+											{% else %}
+												<span class="badge badge-secondary">-</span>
+											{% endif %}
+										</td>
+										<td>
+											{% if pay.id != repayment.id %}
+												<a href="{% url 'loans:repayment-detail' pay.id %}" class="btn btn-xs btn-info">
+													<i class="glyphicon glyphicon-eye-open"></i> View
+												</a>
+											{% else %}
+												<span class="text-muted">Current</span>
+											{% endif %}
+										</td>
+									</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<!-- Right Column - Summary & Actions -->
+			<div class="col-12 col-lg-4">
+				<!-- Payment Summary -->
+				<div class="box">
+					<div class="box-header with-border">
+						<h4 class="box-title">Payment Summary</h4>
+					</div>
+					<div class="box-body">
+						<div class="list-group">
+							<div class="list-group-item d-flex justify-content-between align-items-center">
+								<span>Payment Amount</span>
+								<strong class="text-success">${{ repayment.amount|floatformat:2 }}</strong>
+							</div>
+							<div class="list-group-item d-flex justify-content-between align-items-center">
+								<span>Payment Method</span>
+								<span class="badge badge-info">{{ repayment.get_method_display }}</span>
+							</div>
+							<div class="list-group-item d-flex justify-content-between align-items-center">
+								<span>Payment Date</span>
+								<strong>{{ repayment.payment_date|date:"M d, Y" }}</strong>
+							</div>
+							<div class="list-group-item d-flex justify-content-between align-items-center">
+								<span>Payment Position</span>
+								<strong>{{ repayment_position }} / {{ total_repayments }}</strong>
+							</div>
+							<div class="list-group-item d-flex justify-content-between align-items-center">
+								<span>Balance Before</span>
+								<strong class="text-warning">${{ balance_before|floatformat:2 }}</strong>
+							</div>
+							<div class="list-group-item d-flex justify-content-between align-items-center">
+								<span>Balance After</span>
+								<strong class="text-success">${{ balance_after|floatformat:2 }}</strong>
+							</div>
+							<div class="list-group-item d-flex justify-content-between align-items-center">
+								<span>Payment Impact</span>
+								<strong>{{ payment_percentage|floatformat:2 }}%</strong>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Quick Actions -->
+				<div class="box">
+					<div class="box-header with-border">
+						<h4 class="box-title">Quick Actions</h4>
+					</div>
+					<div class="box-body">
+						<a href="{% url 'loans:loan-detail' loan.id %}" class="btn btn-primary btn-block mb-2">
+							<i class="glyphicon glyphicon-list"></i> View Full Loan
+						</a>
+						
+						<a href="{% url 'loans:loanapplication-detail' application.id %}" class="btn btn-info btn-block mb-2">
+							<i class="glyphicon glyphicon-file"></i> View Application
+						</a>
+						
+						<a href="{% url 'clients:client_detail' client.id %}" class="btn btn-success btn-block mb-2">
+							<i class="glyphicon glyphicon-user"></i> View Client Profile
+						</a>
+						
+						<a href="{% url 'loans:loanproduct-detail' product.id %}" class="btn btn-warning btn-block">
+							<i class="glyphicon glyphicon-list"></i> View Loan Product
+						</a>
+					</div>
+				</div>
+
+				<!-- Navigation -->
+				<div class="box">
+					<div class="box-header with-border">
+						<h4 class="box-title">Navigation</h4>
+					</div>
+					<div class="box-body">
+						<div class="list-group">
+							{% if previous_repayment %}
+							<a href="{% url 'loans:repayment-detail' previous_repayment.id %}" class="list-group-item">
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<strong><i class="glyphicon glyphicon-arrow-up"></i> Previous Payment</strong>
+										<br>
+										<small class="text-muted">{{ previous_repayment.payment_date|date:"M d, Y" }}</small>
+									</div>
+									<div>
+										<strong>${{ previous_repayment.amount|floatformat:2 }}</strong>
+									</div>
+								</div>
+							</a>
+							{% else %}
+							<div class="list-group-item">
+								<small class="text-muted">No previous payment</small>
+							</div>
+							{% endif %}
+							
+							{% if next_repayment %}
+							<a href="{% url 'loans:repayment-detail' next_repayment.id %}" class="list-group-item">
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<strong><i class="glyphicon glyphicon-arrow-down"></i> Next Payment</strong>
+										<br>
+										<small class="text-muted">{{ next_repayment.payment_date|date:"M d, Y" }}</small>
+									</div>
+									<div>
+										<strong>${{ next_repayment.amount|floatformat:2 }}</strong>
+									</div>
+								</div>
+							</a>
+							{% else %}
+							<div class="list-group-item">
+								<small class="text-muted">No next payment</small>
+							</div>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+
+				<!-- Loan Progress -->
+				<div class="box">
+					<div class="box-header with-border">
+						<h4 class="box-title">Loan Progress</h4>
+					</div>
+					<div class="box-body">
+						<div class="mb-3">
+							<div class="d-flex justify-content-between mb-2">
+								<span><strong>Repayment Progress</strong></span>
+								<span><strong>{% widthratio total_repaid total_amount 100 %}%</strong></span>
+							</div>
+							<div class="progress" style="height: 25px;">
+								<div class="progress-bar {% if total_repaid >= total_amount %}bg-success{% elif total_repaid >= total_amount|floatformat:0|add:"-1"|floatformat:0 %}bg-info{% else %}bg-warning{% endif %}" 
+									 role="progressbar" 
+									 style="width: {% widthratio total_repaid total_amount 100 %}%"
+									 aria-valuenow="{% widthratio total_repaid total_amount 100 %}" 
+									 aria-valuemin="0" 
+									 aria-valuemax="100">
+									{% widthratio total_repaid total_amount 100 %}%
+								</div>
+							</div>
+						</div>
+						<div class="list-group">
+							<div class="list-group-item d-flex justify-content-between">
+								<span>Total Amount</span>
+								<strong>${{ total_amount|floatformat:2 }}</strong>
+							</div>
+							<div class="list-group-item d-flex justify-content-between">
+								<span>Total Repaid</span>
+								<strong class="text-success">${{ total_repaid|floatformat:2 }}</strong>
+							</div>
+							<div class="list-group-item d-flex justify-content-between">
+								<span>Outstanding</span>
+								<strong class="text-danger">${{ remaining_balance|floatformat:2 }}</strong>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Payment Timeline -->
+				<div class="box">
+					<div class="box-header with-border">
+						<h4 class="box-title">Payment Timeline</h4>
+					</div>
+					<div class="box-body">
+						<div class="timeline">
+							<div>
+								<i class="fas fa-money-bill-wave bg-green"></i>
+								<div class="timeline-item">
+									<span class="time"><i class="fas fa-clock"></i> {{ loan.disbursement_date|date:"M d, Y" }}</span>
+									<h3 class="timeline-header">Loan Disbursed</h3>
+									<div class="timeline-body">
+										Amount: ${{ loan.disbursed_amount|floatformat:2 }}
+									</div>
+								</div>
+							</div>
+
+							{% for pay in all_repayments %}
+							<div>
+								<i class="fas fa-arrow-down {% if pay.id == repayment.id %}bg-primary{% else %}bg-info{% endif %}"></i>
+								<div class="timeline-item">
+									<span class="time"><i class="fas fa-clock"></i> {{ pay.payment_date|date:"M d, Y" }}</span>
+									<h3 class="timeline-header">
+										{% if pay.id == repayment.id %}
+											<strong>Current Payment</strong>
+										{% else %}
+											Payment #{{ forloop.counter }}
+										{% endif %}
+									</h3>
+									<div class="timeline-body">
+										${{ pay.amount|floatformat:2 }} via {{ pay.get_method_display }}
+									</div>
+								</div>
+							</div>
+							{% endfor %}
+
+							{% if loan.status == 'CLOSED' %}
+							<div>
+								<i class="fas fa-check-circle bg-success"></i>
+								<div class="timeline-item">
+									<span class="time"><i class="fas fa-clock"></i> {{ loan.updated_at|date:"M d, Y" }}</span>
+									<h3 class="timeline-header">Loan Closed</h3>
+									<div class="timeline-body">
+										Fully repaid
+									</div>
+								</div>
+							</div>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- /.content -->
+{% endblock main-content %}
+

@@ -7,7 +7,7 @@ from .loan_product import (
 from .loan_repayment import RepaymentCreateView
 from .loan_dashboard import LoanDashboardView
 from .loan_application import LoanApplicationDetailView, LoanApplicationUpdateView, LoanApplicationCreateView, LoanApplicationListView
-from .loan_repayment import RepaymentCreateView, RepaymentListView
+from .loan_repayment import RepaymentCreateView, RepaymentListView, RepaymentDetailView
 
 __all__ = [
     LoanApproveView,
@@ -28,4 +28,5 @@ __all__ = [
 
     RepaymentCreateView,
     RepaymentListView,
+    RepaymentDetailView,
 ]

@@ -8,12 +8,11 @@
 					<div class="d-inline-block align-items-center">
 						<nav>
 							<ol class="breadcrumb">
-								<li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
-								<li class="breadcrumb-item" aria-current="page">Tables</li>
-								<li class="breadcrumb-item active" aria-current="page">Branch Tables</li>
+								<li class="breadcrumb-item"><a href="{% url 'loans:home' %}"><i class="mdi mdi-home-outline"></i> Home</a></li>
+								<li class="breadcrumb-item" aria-current="page">Branches</li>
+								<li class="breadcrumb-item active" aria-current="page">Branch List</li>
 							</ol>
 						</nav>
-						
 					</div>
 				</div>
 				<div class="mt-3">	
@@ -44,19 +43,26 @@
 					<div class="table-responsive">
 					  <table class="table table-hover">
 						<tr>
+						  <th>NO</th>
 						  <th>Name</th>
 						  <th>Location</th>
 						  <th>Manager</th>
 						  <th>Phone Number</th>
+						  <th>Action</th>
 						</tr>
                         {% for branch in branches %}
                         <tr>
-						  <td><a href="javascript:void(0)">Branch #{{branch.id}}</a></td>
-						  <td>{{branch.name}}</td>
-						  <td> {{branch.location}} </td>
-						  <td> {{branch.manager}} </td>
-						  <td> {{branch.phone}} </td>
-						  
+						  <td>{{ forloop.counter }}</td>
+						  <td><a href="{% url 'branches:branch_detail' branch.id %}">{{ branch.name }}</a></td>
+						  <td>{{ branch.location }}</td>
+						  <td>
+							{% if branch.manager %}
+								{{ branch.manager.get_full_name|default:branch.manager.username }}
+							{% else %}
+								<span class="text-muted">Not assigned</span>
+							{% endif %}
+						  </td>
+						  <td>{{ branch.phone|default:"N/A" }}</td>
 						  <td>
 							<a href="{% url 'branches:branch_detail' branch.id %}">
 								<i class="glyphicon glyphicon-eye-open text-info me-4" data-bs-toggle="tooltip" title="View"></i>
