@@ -1,0 +1,532 @@
+{% extends "base.html" %}
+{% load static %}
+{% block main-content %}
+	<!-- Content Header (Page header) -->	  
+	<div class="content-header">
+		<div class="d-flex align-items-center">
+			<div class="me-auto">
+				<h4 class="page-title">My Profile</h4>
+				<div class="d-inline-block align-items-center">
+					<nav>
+						<ol class="breadcrumb">
+							<li class="breadcrumb-item"><a href="{% url 'loans:home' %}"><i class="mdi mdi-home-outline"></i> Home</a></li>
+							<li class="breadcrumb-item active" aria-current="page">Profile</li>
+						</ol>
+					</nav>
+				</div>
+			</div>
+			<div class="mt-3">	
+				<a href="{% url 'users:user-list' %}" class="btn btn-secondary">
+					<i class="glyphicon glyphicon-arrow-left"></i> Back
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<!-- Main content -->
+	<section class="content">
+		<div class="row">
+			<!-- Left Column - Profile Information -->
+			<div class="col-12 col-lg-8">
+				<!-- Profile Card -->
+				<div class="box">
+					<div class="box-body">
+						<div class="row">
+							<div class="col-md-8">
+								<h3 class="mb-0">{{ profile_user.get_full_name|default:profile_user.username }}</h3>
+								<p class="text-muted mb-0">{{ profile_user.get_role_display }}</p>
+							</div>
+							<div class="col-md-4 text-end">
+								<span class="badge badge-lg badge-primary">
+									{{ profile_user.get_role_display }}
+								</span>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- User Details -->
+				<div class="box">
+					<div class="box-header with-border">
+						<h4 class="box-title">Personal Information</h4>
+					</div>
+					<div class="box-body">
+						<div class="row">
+							<div class="col-md-6">
+								<table class="table table-borderless">
+									<tr>
+										<td><strong>Username:</strong></td>
+										<td>{{ profile_user.username }}</td>
+									</tr>
+									<tr>
+										<td><strong>First Name:</strong></td>
+										<td>{{ profile_user.first_name|default:"N/A" }}</td>
+									</tr>
+									<tr>
+										<td><strong>Last Name:</strong></td>
+										<td>{{ profile_user.last_name|default:"N/A" }}</td>
+									</tr>
+									<tr>
+										<td><strong>Email:</strong></td>
+										<td>{{ profile_user.email|default:"N/A" }}</td>
+									</tr>
+								</table>
+							</div>
+							<div class="col-md-6">
+								<table class="table table-borderless">
+									<tr>
+										<td><strong>Role:</strong></td>
+										<td><span class="badge badge-primary">{{ profile_user.get_role_display }}</span></td>
+									</tr>
+									<tr>
+										<td><strong>Branch:</strong></td>
+										<td>
+											{% if profile_user.branch %}
+												<a href="{% url 'branches:branch_detail' profile_user.branch.id %}">
+													{{ profile_user.branch.name }}
+												</a>
+											{% else %}
+												<span class="text-muted">Not assigned</span>
+											{% endif %}
+										</td>
+									</tr>
+									<tr>
+										<td><strong>Date Joined:</strong></td>
+										<td>{{ profile_user.date_joined|date:"F d, Y" }}</td>
+									</tr>
+									<tr>
+										<td><strong>Last Login:</strong></td>
+										<td>{{ profile_user.last_login|date:"F d, Y g:i A"|default:"Never" }}</td>
+									</tr>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Activity Statistics -->
+				<div class="row">
+					<div class="col-md-3 col-6">
+						<div class="box box-body bg-primary">
+							<h4 class="text-white">Applications</h4>
+							<h2 class="text-white mb-0">{{ applications_created }}</h2>
+							<small class="text-white">Created</small>
+						</div>
+					</div>
+					<div class="col-md-3 col-6">
+						<div class="box box-body bg-info">
+							<h4 class="text-white">Loans</h4>
+							<h2 class="text-white mb-0">{{ loans_created }}</h2>
+							<small class="text-white">Created</small>
+						</div>
+					</div>
+					<div class="col-md-3 col-6">
+						<div class="box box-body bg-success">
+							<h4 class="text-white">Repayments</h4>
+							<h2 class="text-white mb-0">{{ repayments_created }}</h2>
+							<small class="text-white">Recorded</small>
+						</div>
+					</div>
+					<div class="col-md-3 col-6">
+						<div class="box box-body bg-warning">
+							<h4 class="text-white">Clients</h4>
+							<h2 class="text-white mb-0">{{ clients_created }}</h2>
+							<small class="text-white">Created</small>
+						</div>
+					</div>
+				</div>
+
+				<!-- Branch Manager Information -->
+				{% if managed_branches_count > 0 %}
+				<div class="box">
+					<div class="box-header with-border">
+						<h4 class="box-title">Managed Branches</h4>
+					</div>
+					<div class="box-body">
+						<div class="list-group">
+							{% for branch in managed_branches %}
+							<a href="{% url 'branches:branch_detail' branch.id %}" class="list-group-item">
+								<div class="d-flex justify-content-between align-items-center">
+									<div>
+										<strong>{{ branch.name }}</strong>
+										<br>
+										<small class="text-muted">{{ branch.location }}</small>
+									</div>
+									<div>
+										<span class="badge badge-info">Manager</span>
+									</div>
+								</div>
+							</a>
+							{% endfor %}
+						</div>
+					</div>
+				</div>
+				{% endif %}
+
+				<!-- Branch Statistics (if user has a branch) -->
+				{% if profile_user.branch %}
+				<div class="box">
+					<div class="box-header with-border">
+						<h4 class="box-title">Branch Statistics</h4>
+						<div class="box-controls pull-right">
+							<a href="{% url 'branches:branch_detail' profile_user.branch.id %}" class="btn btn-sm btn-info">View Branch</a>
+						</div>
+					</div>
+					<div class="box-body">
+						<div class="row">
+							<div class="col-md-4">
+								<div class="text-center">
+									<h3 class="text-primary">{{ branch_clients }}</h3>
+									<p class="text-muted">Clients</p>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="text-center">
+									<h3 class="text-info">{{ branch_applications }}</h3>
+									<p class="text-muted">Applications</p>
+								</div>
+							</div>
+							<div class="col-md-4">
+								<div class="text-center">
+									<h3 class="text-success">{{ branch_loans }}</h3>
+									<p class="text-muted">Loans</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				{% endif %}
+
+				<!-- Recent Applications Created -->
+				{% if recent_applications %}
+				<div class="box">
+					<div class="box-header with-border">
+						<h4 class="box-title">Recent Applications Created</h4>
+						<div class="box-controls pull-right">
+							<a href="{% url 'loans:loanapplication-list' %}" class="btn btn-sm btn-primary">View All</a>
+						</div>
+					</div>
+					<div class="box-body">
+						<div class="table-responsive">
+							<table class="table table-hover">
+								<thead>
+									<tr>
+										<th>Application #</th>
+										<th>Client</th>
+										<th>Product</th>
+										<th>Amount</th>
+										<th>Date</th>
+										<th>Status</th>
+										<th>Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for application in recent_applications %}
+									<tr>
+										<td>#{{ application.id }}</td>
+										<td>{{ application.client }}</td>
+										<td>{{ application.loan_product.name }}</td>
+										<td>${{ application.amount_requested|floatformat:2 }}</td>
+										<td>{{ application.application_date|date:"M d, Y" }}</td>
+										<td>
+											<span class="badge badge-{% if application.status == 'APPROVED' %}success{% elif application.status == 'PENDING' %}warning{% elif application.status == 'REJECTED' %}danger{% else %}info{% endif %}">
+												{{ application.get_status_display }}
+											</span>
+										</td>
+										<td>
+											<a href="{% url 'loans:loanapplication-detail' application.id %}" class="btn btn-xs btn-info">
+												<i class="glyphicon glyphicon-eye-open"></i> View
+											</a>
+										</td>
+									</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				{% endif %}
+
+				<!-- Recent Loans Created -->
+				{% if recent_loans %}
+				<div class="box">
+					<div class="box-header with-border">
+						<h4 class="box-title">Recent Loans Created</h4>
+						<div class="box-controls pull-right">
+							<a href="{% url 'loans:loan-disbursement-list' %}" class="btn btn-sm btn-primary">View All</a>
+						</div>
+					</div>
+					<div class="box-body">
+						<div class="table-responsive">
+							<table class="table table-hover">
+								<thead>
+									<tr>
+										<th>Loan #</th>
+										<th>Client</th>
+										<th>Disbursed</th>
+										<th>Balance</th>
+										<th>Status</th>
+										<th>Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for loan in recent_loans %}
+									<tr>
+										<td>#{{ loan.id }}</td>
+										<td>{{ loan.loan_application.client }}</td>
+										<td>${{ loan.disbursed_amount|floatformat:2 }}</td>
+										<td><strong class="text-{% if loan.balance > 0 %}danger{% else %}success{% endif %}">${{ loan.balance|floatformat:2 }}</strong></td>
+										<td>
+											<span class="badge badge-{% if loan.status == 'ACTIVE' %}success{% elif loan.status == 'CLOSED' %}info{% else %}danger{% endif %}">
+												{{ loan.get_status_display }}
+											</span>
+										</td>
+										<td>
+											<a href="{% url 'loans:loan-detail' loan.id %}" class="btn btn-xs btn-info">
+												<i class="glyphicon glyphicon-eye-open"></i> View
+											</a>
+										</td>
+									</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				{% endif %}
+
+				<!-- Recent Repayments Recorded -->
+				{% if recent_repayments %}
+				<div class="box">
+					<div class="box-header with-border">
+						<h4 class="box-title">Recent Repayments Recorded</h4>
+						<div class="box-controls pull-right">
+							<a href="{% url 'loans:repayment-list' %}" class="btn btn-sm btn-primary">View All</a>
+						</div>
+					</div>
+					<div class="box-body">
+						<div class="table-responsive">
+							<table class="table table-hover">
+								<thead>
+									<tr>
+										<th>Date</th>
+										<th>Loan #</th>
+										<th>Client</th>
+										<th>Amount</th>
+										<th>Method</th>
+										<th>Action</th>
+									</tr>
+								</thead>
+								<tbody>
+									{% for repayment in recent_repayments %}
+									<tr>
+										<td>{{ repayment.payment_date|date:"M d, Y" }}</td>
+										<td>#{{ repayment.loan.id }}</td>
+										<td>{{ repayment.loan.loan_application.client }}</td>
+										<td><strong class="text-success">${{ repayment.amount|floatformat:2 }}</strong></td>
+										<td><span class="badge badge-info">{{ repayment.get_method_display }}</span></td>
+										<td>
+											<a href="{% url 'loans:repayment-detail' repayment.id %}" class="btn btn-xs btn-info">
+												<i class="glyphicon glyphicon-eye-open"></i> View
+											</a>
+										</td>
+									</tr>
+									{% endfor %}
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				{% endif %}
+			</div>
+
+			<!-- Right Column - Summary & Actions -->
+			<div class="col-12 col-lg-4">
+				<!-- Activity Summary -->
+				<div class="box">
+					<div class="box-header with-border">
+						<h4 class="box-title">Activity Summary</h4>
+					</div>
+					<div class="box-body">
+						<div class="list-group">
+							<div class="list-group-item d-flex justify-content-between align-items-center">
+								<span>Applications Created</span>
+								<strong>{{ applications_created }}</strong>
+							</div>
+							<div class="list-group-item d-flex justify-content-between align-items-center">
+								<span>Applications Approved</span>
+								<strong class="text-success">{{ applications_approved }}</strong>
+							</div>
+							<div class="list-group-item d-flex justify-content-between align-items-center">
+								<span>Loans Created</span>
+								<strong>{{ loans_created }}</strong>
+							</div>
+							<div class="list-group-item d-flex justify-content-between align-items-center">
+								<span>Repayments Recorded</span>
+								<strong>{{ repayments_created }}</strong>
+							</div>
+							<div class="list-group-item d-flex justify-content-between align-items-center">
+								<span>Total Repaid (by you)</span>
+								<strong class="text-success">${{ total_repaid_by_user|floatformat:2|default:"0.00" }}</strong>
+							</div>
+							<div class="list-group-item d-flex justify-content-between align-items-center">
+								<span>Clients Created</span>
+								<strong>{{ clients_created }}</strong>
+							</div>
+							<div class="list-group-item d-flex justify-content-between align-items-center">
+								<span>Loan Products Created</span>
+								<strong>{{ products_created }}</strong>
+							</div>
+							<div class="list-group-item d-flex justify-content-between align-items-center">
+								<span>Branches Created</span>
+								<strong>{{ branches_created }}</strong>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Quick Actions -->
+				<div class="box">
+					<div class="box-header with-border">
+						<h4 class="box-title">Quick Actions</h4>
+					</div>
+					<div class="box-body">
+						<a href="{% url 'loans:loanapplication-create' %}" class="btn btn-success btn-block mb-2">
+							<i class="glyphicon glyphicon-plus"></i> New Application
+						</a>
+						
+						<a href="{% url 'clients:client_create' %}" class="btn btn-primary btn-block mb-2">
+							<i class="glyphicon glyphicon-plus"></i> New Client
+						</a>
+						
+						<a href="{% url 'loans:loan-disbursement-create' %}" class="btn btn-info btn-block mb-2">
+							<i class="glyphicon glyphicon-usd"></i> New Disbursement
+						</a>
+						
+						<a href="{% url 'loans:repayment-create' %}" class="btn btn-warning btn-block">
+							<i class="glyphicon glyphicon-plus"></i> Record Payment
+						</a>
+					</div>
+				</div>
+
+				<!-- Account Information -->
+				<div class="box">
+					<div class="box-header with-border">
+						<h4 class="box-title">Account Information</h4>
+					</div>
+					<div class="box-body">
+						<div class="list-group">
+							<div class="list-group-item">
+								<strong>Username:</strong><br>
+								<small class="text-muted">{{ profile_user.username }}</small>
+							</div>
+							<div class="list-group-item">
+								<strong>Email:</strong><br>
+								<small class="text-muted">{{ profile_user.email|default:"Not provided" }}</small>
+							</div>
+							<div class="list-group-item">
+								<strong>Role:</strong><br>
+								<small class="text-muted">
+									<span class="badge badge-primary">{{ profile_user.get_role_display }}</span>
+								</small>
+							</div>
+							<div class="list-group-item">
+								<strong>Branch:</strong><br>
+								<small class="text-muted">
+									{% if profile_user.branch %}
+										{{ profile_user.branch.name }}
+									{% else %}
+										Not assigned
+									{% endif %}
+								</small>
+							</div>
+							<div class="list-group-item">
+								<strong>Member Since:</strong><br>
+								<small class="text-muted">{{ profile_user.date_joined|date:"F d, Y" }}</small>
+							</div>
+							<div class="list-group-item">
+								<strong>Last Login:</strong><br>
+								<small class="text-muted">{{ profile_user.last_login|date:"F d, Y g:i A"|default:"Never" }}</small>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- User Timeline -->
+				<div class="box">
+					<div class="box-header with-border">
+						<h4 class="box-title">Activity Timeline</h4>
+					</div>
+					<div class="box-body">
+						<div class="timeline">
+							<div>
+								<i class="fas fa-user-plus bg-blue"></i>
+								<div class="timeline-item">
+									<span class="time"><i class="fas fa-clock"></i> {{ profile_user.date_joined|date:"M d, Y" }}</span>
+									<h3 class="timeline-header">Account Created</h3>
+									<div class="timeline-body">
+										User account created
+									</div>
+								</div>
+							</div>
+
+							{% if clients_created > 0 %}
+							<div>
+								<i class="fas fa-users bg-green"></i>
+								<div class="timeline-item">
+									<span class="time"><i class="fas fa-clock"></i> -</span>
+									<h3 class="timeline-header">First Client Created</h3>
+									<div class="timeline-body">
+										Created {{ clients_created }} client{{ clients_created|pluralize }}
+									</div>
+								</div>
+							</div>
+							{% endif %}
+
+							{% if applications_created > 0 %}
+							<div>
+								<i class="fas fa-file-alt bg-info"></i>
+								<div class="timeline-item">
+									<span class="time"><i class="fas fa-clock"></i> -</span>
+									<h3 class="timeline-header">First Application</h3>
+									<div class="timeline-body">
+										Created {{ applications_created }} application{{ applications_created|pluralize }}
+									</div>
+								</div>
+							</div>
+							{% endif %}
+
+							{% if loans_created > 0 %}
+							<div>
+								<i class="fas fa-money-bill-wave bg-success"></i>
+								<div class="timeline-item">
+									<span class="time"><i class="fas fa-clock"></i> -</span>
+									<h3 class="timeline-header">First Loan Disbursed</h3>
+									<div class="timeline-body">
+										Created {{ loans_created }} loan{{ loans_created|pluralize }}
+									</div>
+								</div>
+							</div>
+							{% endif %}
+
+							{% if repayments_created > 0 %}
+							<div>
+								<i class="fas fa-arrow-down bg-warning"></i>
+								<div class="timeline-item">
+									<span class="time"><i class="fas fa-clock"></i> -</span>
+									<h3 class="timeline-header">First Payment Recorded</h3>
+									<div class="timeline-body">
+										Recorded {{ repayments_created }} payment{{ repayments_created|pluralize }}
+									</div>
+								</div>
+							</div>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
+	<!-- /.content -->
+{% endblock main-content %}
+
